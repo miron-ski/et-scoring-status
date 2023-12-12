@@ -1,0 +1,87 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<h3>Tournament Scoring Table</h3>
+
+<div class="row py-3 w-50">
+    <div class="col">
+        <label for="searchLastName">Search by Last Name:</label>
+        <input class="form-control" type="text" id="searchLastName" @bind="searchLastName" />
+    </div>
+
+    <div class="col d-flex align-items-end">
+        <button class="btn btn-primary mx-2" @onclick="UpdateSearchResults">Search</button>
+        <button class="btn btn-primary" @onclick="ResetSeachResults">Reset</button>
+    </div>
+</div>
+
+@if (players.Count == 0)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <table class="table py-3">
+
+        <thead style="background-color: darkblue; color: white;">
+            <tr>
+                <th @onclick="@(() => Sort("Match"))">
+                    Match
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67z" />
+                    </svg>
+                </th>
+                <th @onclick="@(() => Sort("PositionDesc"))">
+                    Position
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67z" />
+                    </svg>
+                </th>
+                <th>Name</th>
+                <th @onclick="@(() => Sort("Score"))">
+                    Par
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67z" />
+                    </svg>
+                </th>
+                @foreach (var round in distinctRounds)
+                {
+                    <th>R @round</th>
+                }
+                <th>Holes</th>
+            </tr>
+        </thead>
+
+        <tbody class="my-3">
+            @foreach (var playerGroup in filteredPlayers.GroupBy(player => player.PlayerId))
+            {
+                if (string.IsNullOrWhiteSpace(searchLastName) || playerGroup.First().LastName.Contains(searchLastName, StringComparison.OrdinalIgnoreCase))
+                {
+                    var currentPlayer = playerGroup.First();
+                    <tr>
+                        <td>@currentPlayer.Match</td>
+                        <td>@currentPlayer.PositionDesc</td>
+                        <td>@currentPlayer.FirstName @currentPlayer.LastName</td>
+                        <td>@currentPlayer.Score</td>
+                        @foreach (var round in distinctRounds)
+                        {
+                            var roundData = playerGroup.FirstOrDefault(p => p.RoundNo == round);
+                            var colour = GetColour(roundData?.HolesPlayed ?? 0, roundData?.IncompleteHoles ?? 0);
+                            <td style="color: white; text-align: center">
+                                @if (@roundData != null)
+                                {
+                                    <div style="padding: 4px; background-color: @colour">
+                                        @roundData.Strokes
+                                    </div>
+                                }
+                            </td>
+                        }
+                        <td>@currentPlayer.HolesPlayed</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+}
+
