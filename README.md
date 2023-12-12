@@ -5,19 +5,6 @@
 A web application built using the Blazor framework. It displays a list of players for a given tournament, allowing users to visualize player scores for each round.
 
 [View Application](https://scoringstatus20231212130446.azurewebsites.net/)
-
-## Table of Contents
-
-1. [Getting Started](#getting-started)
-   - [Prerequisites](#prerequisites)
-   - [Installation](#installation)
-2. [Features](#features)
-   - [Player List](#player-list)
-   - [Search](#search)
-   - [Sorting](#sorting)
-3. [Testing](#testing)
-   - [Unit Tests](#unit-tests)
-4. [Deployment](#deployment)
    
 
 ## Getting Started
